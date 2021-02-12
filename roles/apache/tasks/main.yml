@@ -1,0 +1,46 @@
+- name: Instalar apache y paquetes php
+  apt:
+    pkg:
+    - apache2
+    - php
+    - php-mysql
+    - php-curl
+    - php-gd
+    - php-mbstring
+    - php-xml
+    - php-xmlrpc
+    - php-soap
+    - php-intl
+    - php-zip
+    - libapache2-mod-php
+
+- name: Activa modulo rewrite
+  command: a2enmod rewrite
+
+#- name: Activa modulo rewrite
+#  community.general.apache2_module:
+#    name: rewrite
+#    state: present
+
+- name: Creo directorio para DocumentRoot
+  file:
+    path: /var/www/wordpress
+    state: directory
+
+- name: Copio el fichero del virtualhost por defecto
+  copy:
+    src: 000-default.conf
+    dest: /etc/apache2/sites-available/000-default.conf
+
+- name: Reinicio apache2
+  command: /etc/init.d/apache2 restart
+
+#- name: Recargo configuracion apache
+#  systemd:
+#    name: apache2
+#    state: restarted
+
+#- name: Habilito servicio Apache2 en el inicio
+#  systemd:
+#    name: apache2
+#    state: enabled

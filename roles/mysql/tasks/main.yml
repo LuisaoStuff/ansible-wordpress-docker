@@ -1,0 +1,38 @@
+- name: Actualizar sistemas
+  apt: update_cache=yes 
+
+- name: Instalar mariadb
+  apt:
+    name: mariadb-server
+    state: present
+
+- name: Recargo configuracion mysql
+  command: /etc/init.d/mysql restart
+
+#- name: Recargo configuracion mysql
+#  systemd:
+#    name: mariadb
+#    state: restarted
+
+- name: Copio script configuracion mariadb
+  copy: >
+    src=mysql_config.bash
+    dest=/tmp
+
+- name: Ejecuto script configuracion
+  command: bash /tmp/mysql_config.bash
+
+
+
+#- name: Crear usuario base de datos wp
+#  community.mysql.mysql_user:
+#    name: wordpress_user
+#   password: Temporal01
+#    state: present
+
+#- name: Crear base de datos wp
+#  community.mysql.mysql_db:
+#    name: wordpress_db
+#    login_user: wordpress_user
+#    state: present
+

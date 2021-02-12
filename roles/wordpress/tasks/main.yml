@@ -1,0 +1,56 @@
+#- name: Descarga ultima version wordpress
+#  get_url:
+#    url: https://wordpress.org/latest.tar.gz
+#    dest: /tmp
+
+- name: Desempaqueto wordpress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: /var/www/
+    remote_src: yes
+
+- name: Cambio propietario a /var/www/wordpress
+  file:
+    path: /var/www/wordpress
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
+
+- name: Elimino fichero tar wordpress
+  file:
+    path: /tmp/latest.tar.gz
+    state: absent
+
+
+- name: Creo fichero inicial de configuracion a partir del ejemplo
+  copy:
+    src: /var/www/wordpress/wp-config-sample.php
+    dest: /var/www/wordpress/wp-config.php
+    remote_src: yes
+    owner: www-data
+    group: www-data
+
+- name: Modifico nombre de usuario de la base de datos
+  lineinfile:
+    path: /var/www/wordpress/wp-config.php
+    regexp: "DB_USER"
+    line: "define( 'DB_USER', 'wordpress_user' );"
+
+- name: Modifico contrasena usuario de la base de datos
+  lineinfile:
+    path: /var/www/wordpress/wp-config.php
+    regexp: "DB_PASSWORD"
+    line: "define( 'DB_PASSWORD', 'Temporal01' );"
+
+- name: Modifico nombre de la base de datos
+  lineinfile:
+    path: /var/www/wordpress/wp-config.php
+    regexp: "DB_NAME"
+    line: "define( 'DB_NAME', 'wordpress_db' );"
+
+- name: Modifico nombre de host
+  lineinfile:
+    path: /var/www/wordpress/wp-config.php
+    regexp: "DB_HOST"
+    line: define( 'DB_HOST', 'localhost' );
